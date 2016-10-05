@@ -1,0 +1,118 @@
+
+void lexical_analyzer::string_case_one(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+			//test
+			//cout << "string case one" << endl;
+				if(character == '\'')
+				{
+					temp.push_back(character);
+					if(increment(row,col))
+					{
+						state = two;
+					}
+					else
+					{
+						Token tok;
+						tok.type = "UNDEFINED";
+						tok.word = temp;
+						tok.line = myRow;
+						myToken_vec.push_back(tok);
+						r_end = true;
+						loop = false;
+						myCol = col;
+						myRow = row;
+					}
+				}
+				else
+				{
+					loop = false;
+				}
+			
+}
+
+void lexical_analyzer::string_case_two(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+				//test
+				//cout << "string case two" << endl;
+				if(character == '\'')
+				{
+					temp.push_back(character);
+					if(increment(row,col))
+					{
+						state = three;
+					}
+					else
+					{
+						Token tok;
+						tok.type = "STRING";
+						tok.word = temp;
+						tok.line = myRow;
+						myToken_vec.push_back(tok);
+						r_end = true;
+						loop = false;
+						myCol = col;
+						myRow = row;
+					}
+				}
+				else
+				{
+					if(increment(row,col))
+					{
+						state = two;
+						temp.push_back(character);
+					}
+					else
+					{
+						temp.push_back(character);
+						Token tok;
+						tok.type = "UNDEFINED";
+						tok.word = temp;
+						tok.line = myRow;
+						myToken_vec.push_back(tok);
+						r_end = true;
+						loop = false;
+						myCol = col;
+						myRow = row;
+					}
+				}
+}
+
+void lexical_analyzer::string_case_three(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+				//test
+				//cout << "string case three" << endl;
+				if(character == '\'')
+				{
+					temp.push_back(character);
+					if(increment(row,col))
+					{
+						state = two;
+					}
+					else
+					{
+						Token tok;
+						tok.type = "UNDEFINED";
+						tok.word = temp;
+						tok.line = myRow;
+						myToken_vec.push_back(tok);
+						r_end = true;
+						loop = false;
+						myCol = col;
+						myRow = row;
+					}
+				}
+				else
+				{
+					Token tok;
+					tok.type = "STRING";
+					tok.word = temp;
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					myCol = col;
+					myRow = row;
+				}
+
+}
+
+

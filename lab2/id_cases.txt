@@ -1,0 +1,63 @@
+void lexical_analyzer::id_case_one(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+	if(isalpha(character))
+				{
+					temp.push_back(character);
+					if(increment(row,col))
+					{
+						state = two;
+					}
+					else
+					{
+						Token tok;
+						tok.word = temp;
+						tok.type = "ID";
+						tok.line = row;
+						myToken_vec.push_back(tok);
+						myCol = col;
+						myRow = row;
+						r_end = true;
+						loop = false;
+					}
+				}
+				else
+				{
+					loop = false;
+				}
+}
+
+void lexical_analyzer::id_case_two(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+				if(isalpha(character) || isdigit(character))
+				{
+					temp.push_back(character);
+					if(increment(row,col))
+					{
+						
+					}
+					else
+					{
+						Token tok;
+						tok.word = temp;
+						tok.type = "ID";
+						tok.line = row;
+						myToken_vec.push_back(tok);
+						myCol = col;
+						myRow = row;
+						r_end = true;
+						loop = false;
+					}
+				}
+				else
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "ID";
+					tok.line = row;
+					myToken_vec.push_back(tok);
+					myCol = col;
+					myRow = row;
+					loop = false;
+				}
+
+}

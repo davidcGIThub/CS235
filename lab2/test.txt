@@ -1,0 +1,4 @@
+'''bob'
+#dgss
+' ''bob'
+'' 'bob'

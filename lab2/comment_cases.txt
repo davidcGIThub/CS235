@@ -1,0 +1,265 @@
+
+void lexical_analyzer::comment_case_one(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+	if(character == '#')
+			{
+				//test
+				//cout << "if it is #" << myRow << endl;
+				
+				temp.push_back(character);
+				if(increment(row,col))
+				{
+					//test
+					//cout << "if incremented" << myRow << endl;
+					state = two;
+				}
+				else
+				{
+					//test
+					//cout << "if not incremented" << myRow << endl;
+					Token tok;
+					tok.word = temp;
+					tok.type = "COMMENT";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+			else
+			{
+				//test
+				//cout << "if its not #" << myRow << endl;
+				loop = false;
+			}
+}
+
+void lexical_analyzer::comment_case_two(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+	//test
+			//cout << "case two" << character << endl;
+			if(character == '|')
+			{
+				temp.push_back(character);
+				if(increment(row,col))
+				{
+					state = three;
+				}
+				else
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "UNDEFINED";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+			else if(character == '\n')
+			{
+				Token tok;
+				tok.word = temp;
+				tok.type = "COMMENT";
+				tok.line = myRow;
+				myToken_vec.push_back(tok);
+				loop = false;
+				if(increment(row,col))
+				{
+					//test
+					//cout << "if increment" << endl;
+					myRow = row;
+					myCol = col;
+				}
+				else
+				{
+					r_end = true;
+					myRow = row;
+					myCol = col;
+				}
+			}
+			else
+			{
+				temp.push_back(character);
+				state = five;
+				if(!increment(row,col))
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "COMMENT";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+	
+}
+
+void lexical_analyzer::comment_case_three(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+			//test
+			//cout << "case three" << character << endl;
+			temp.push_back(character);
+			if(character == '|')
+			{
+				if(increment(row,col))
+				{
+					state = four;
+				}
+				else
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "UNDEFINED";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+			else
+			{
+				state = three;
+				if(!increment(row,col))
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "UNDEFINED";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+}
+
+void lexical_analyzer::comment_case_four(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+	//test
+			//cout << "case four" << character << endl;
+			temp.push_back(character);
+			if ( character == '|')
+			{
+				if(increment(row,col))
+				{
+					state = four;
+				}
+				else
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "UNDEFINED";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+			else if(character == '#')
+			{
+				Token tok;
+				tok.word = temp;
+				tok.type = "COMMENT";
+				tok.line = myRow;
+				myToken_vec.push_back(tok);
+				loop = false;
+				if(!increment(row,col)) r_end = true;
+				myCol = col;
+				myRow = row;
+			}
+			else
+			{
+				if(increment(row,col))
+				{
+					state = three;
+					//test
+					//cout << "if im right came here" << endl;
+				}
+				else
+				{
+					Token tok;
+					tok.word = temp;
+					tok.type = "UNDEFINED";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+	
+	
+}
+
+void lexical_analyzer::comment_case_five(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+			//test
+			//cout << "case five:" << " the char is " << character << endl;
+			if(character == '\n')
+			{
+				//test
+				//cout << "if backslash n" << endl;
+				Token tok;
+				tok.word = temp;
+				tok.type = "COMMENT";
+				tok.line = myRow;
+				myToken_vec.push_back(tok);
+				loop = false;
+				if(increment(row,col))
+				{
+					//test
+					//cout << "if increment" << endl;
+					myRow = row;
+					myCol = col;
+				}
+				else
+				{
+					r_end = true;
+					myRow = row;
+					myCol = col;
+				}
+			}
+			else
+			{
+				//test
+				//cout << "if not back n" << endl;
+				temp.push_back(character);
+				if(increment(row,col))
+				{
+					//test
+					//cout << "if increment" << endl;
+					state = five;
+				}
+				else
+				{
+					//test
+					//cout << "if not increment" << endl;
+					Token tok;
+					tok.word = temp;
+					tok.type = "COMMENT";
+					tok.line = myRow;
+					myToken_vec.push_back(tok);
+					loop = false;
+					r_end = true;
+					myCol = col;
+					myRow = row;
+				}
+			}
+	
+}
+
+

@@ -1,0 +1,80 @@
+
+
+void lexical_analyzer::colon_dash_case_one(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+				//test
+				//cout << "case one - colon dash" << endl;
+				if(character == ':')
+				{
+					//test
+					//cout << "char is :" << endl;
+					temp.push_back(character);
+					if(increment(row,col))
+					{
+						//test
+						//cout << "can increment - case one" << endl;
+						state = two;
+					}
+					else
+					{
+						Token tok;
+						tok.word = temp;
+						tok.line = row;
+						tok.type = "COLON";
+						myToken_vec.push_back(tok);
+						r_end = true;
+						loop = false;
+						myRow = row;
+						myCol = col;
+					}
+				}
+				else
+				{
+					loop = false;
+				}
+
+}
+
+
+void lexical_analyzer::colon_dash_case_two(string& temp,char& character, int& row, int& col, bool& loop, states& state)
+{
+				//test
+				//cout << "case two - colon dash" << endl;
+				//test
+				//cout << "in case two the the char is " << character << endl;
+				if(character == '-')
+				{
+					temp.push_back(character);
+					Token tok;
+					tok.word = temp;
+					tok.line = row;
+					tok.type = "COLON_DASH";
+					myToken_vec.push_back(tok);
+					loop = false;
+					if(increment(row,col))
+					{
+						myRow = row;
+						myCol = col;
+					}
+					else
+					{
+						r_end = true;
+						myRow = row;
+						myCol = col;
+					}
+				}
+				else
+				{
+					//test
+					//cout << "not '-' - case two" << endl;
+					Token tok;
+					tok.word = temp;
+					tok.line = row;
+					tok.type = "COLON";
+					myToken_vec.push_back(tok);
+					loop = false;
+					myRow = row;
+					myCol = col;
+				}
+}
+
