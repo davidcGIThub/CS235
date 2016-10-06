@@ -68,7 +68,7 @@ void datalogProgram::print_output()  //assuming vector size is size of how many 
 bool datalogProgram::datalogue_Program()
 {
 	int state = 1;
-	string temp;
+	string temp = " ";
 	bool wut = true;
 	
 	while(state < 15)
@@ -118,16 +118,19 @@ bool datalogProgram::datalogue_Program()
 				wut = query_List();
 				break;
 		}
-		state++;	
+			
 		if(temp != " " && myTokens[myPos++] != temp)
 		{
-			temp = " ";
 			return false;
 		}
+
 		if (wut == false)
 		{
 			return false;
 		}
+		
+		temp = " ";
+		state++;
 	}
 	return true;
 
@@ -137,14 +140,20 @@ bool datalogProgram::datalogue_Program()
 bool datalogProgram::scheme_()
 {
 	if(myTokens[myPos] != "ID")
+	{
+		myPos++;
 		return false;
+	}
 	temp_scheme.myHeadID = myTokens[myPos++].word // add ID to scheme instance
 	
 	if(myTokens[myPos++] != "LEFT_PAREN")
 		return false;
 		
 	if(myTokens[myPos] != "ID")
+	{
+		myPos++;
 		return false;
+	}
 	temp_vec.push_back(myTokens[myPos++].word); //add ID to temp_vec
 	
 	if(!id_List())
@@ -153,13 +162,254 @@ bool datalogProgram::scheme_()
 	if(myTokens[myPos++] != "LEFT_PAREN")
 		return false;
 		
-	temp_scheme.myIDs = temp_ID_vec; //add IDs in temp_vec to scheme instance
+	temp_scheme.myIDs = temp_vec; //add IDs in temp_vec to scheme instance
+	mySchemes.push_back(temp_scheme); // add scheme to mySchemes
+	
+	temp_scheme.myHeadId = ""; // clear the temp_scheme
+	temp_scheme.myIDs.clear();
+	
 	temp_vec.clear(); //clear the temp_vec
 		
 	return true;
 }
 		
+
+//schemeList	->	scheme schemeList | lambda
+bool datalogProgram::scheme_List()
+{
+	if(myTokens[myPos] == "ID")
+	{
+		if(!scheme_())
+			return false;
+		if(!scheme_List())
+			return false;
+	}
 	
+	return true;
+	
+}
+
+//idList  	->	COMMA ID idList | lambda
+bool datalogProgram::id_List_()
+{
+	if(myTokens[myPos] == "COMMA")
+	{
+		myPos++;
+		if(myTokens[myPos] != "ID")
+		{
+			myPos++;
+			return false;
+		}
+		temp_vec.push_back(myTokens[myPos++].word);
+		
+		if(!id_List())
+			return false;
+	}
+	return true;
+}
+
+//fact   -> 	ID LEFT_PAREN STRING stringList RIGHT_PAREN PERIOD
+bool datalogProgram::fact_()
+{
+	if(myTokens[myPos] != "ID")
+	{
+		myPos++;
+		return false;
+	}
+	temp_fact.myHeadID = myTokens[myPos++].word // add ID to fact instance
+	
+	if(myTokens[myPos++] != "LEFT_PAREN")
+	{
+		return false;
+	}
+	
+	if(myTokens[myPos] != "STRING")
+	{
+		myPos++;
+		return false;
+	}
+	temp_fact.myStrings.push_back(myTokens[myPos++].word);
+	
+	if(!string_List())
+		return false;
+	
+	if(myTokens[myPos++] != "RIGHT_PAREN")
+	{
+		return false;
+	}	
+	
+	if(myTokens[myPos++] != "PERIOD")
+	{
+		return false;
+	}
+	
+	myFacts.push_back(temp_fact); //add fact to myFacts
+	
+	temp_fact.myStrings.clear(); // clear the temp_fact
+	temp_fact.myHeadID = "";
+	
+	return true;
+}
+	
+
+//factList	->	fact factList | lambda
+bool datalogProgram::fact_List()
+{
+	if(myTokens[myPos] == "ID")
+	{
+		if(!fact_())
+		{
+			return false;
+		}
+		if(!fact_List())
+		{
+			return false;
+		}
+	}
+	return true;
+		
+
+}
+
+//rule   ->	headPredicate COLON_DASH predicate predicateList PERIOD
+bool datalogProgram::rule_()
+{
+	if(!head_Predicate())
+	{
+		return false;
+	}
+	
+	if(myTokens[myPos++] != "COLON_DASH")
+	{
+		return false
+	}
+	
+	if(!predicate_())
+	{
+		return false
+	}
+	
+	if(!predicate_List())
+	{
+		return false;
+	}
+	
+	if(myTokens[myPos++] != "PERIOD")
+	{
+		return false
+	}
+	
+	temp_rule.myPredicates = temp_pred_vec; //add predicates to instance of rule
+	temp_pred_vec.clear();
+	
+	myRules.push_back(temp_rule); //add rule to myRules
+	
+	temp_rule.myHeadID = "";
+	temp_rule.myIDs.clear();
+	temp_rule.myPredicates.clear();
+	
+	return true;
+
+}
+
+//ruleList	->	rule ruleList | lambda
+bool datalogProgram::rule_List()
+{
+	if(myTokens[myPos] == "ID")
+	{
+		if(!rule_())
+		{
+			return false;
+		}
+		if(!rule_List())
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//headPredicate	->	ID LEFT_PAREN ID idList RIGHT_PAREN
+bool datalogProgram::head_Predicate()
+{
+	if(myTokens[myPos] != "ID")
+	{
+			myPos++;
+			return false;
+	}
+	temp_rule.myHeadID = myTokens[myPos++].word);
+	
+	if(myTokens[myPos++] != "LEFT_PAREN")
+	{
+		return false;
+	}
+	
+	if(myTokens[myPos] != "ID")
+	{
+			myPos++;
+			return false;
+	}
+	temp_vec.push_back(myTokens[myPos++].word);
+	
+	if(!id_List())
+	{
+		return false;
+	}
+	
+	if(myTokens[myPos++] != "RIGHT_PAREN")
+	{
+		return false;
+	}
+	temp_rule.myIDs = temp_vec;
+	temp_vec.clear();
+	
+	return true;
+
+}
+
+//predicate	->	ID LEFT_PAREN parameter parameterList RIGHT_PAREN
+bool datalogProgram::predicate_()
+{
+	if(myTokens[myPos] != "ID")
+	{
+			myPos++;
+			return false;
+	}
+	temp_predicate.myHeadID = myTokens[myPos++].word);
+	
+	if(myTokens[myPos++] != "LEFT_PAREN")
+	{
+		return false;
+	}
+	
+	if(!parameter_())
+	{
+		return false
+	}
+	
+	if(!parameter_List())
+	{
+		return false
+	}
+	
+	if(myTokens[myPos++] != "RIGHT_PAREN")
+	{
+		return false;
+	}
+	
+	temp_pred_vec.push_back(temp_predicate);
+	
+	temp_predicate.myHeadID = "";
+	temp_predicate.myParameters.clear();
+	
+	return true;
+
+}
+
+
+
+
+
 		/*
 		int myPos;
 		vector<Token> myTokens;
@@ -182,66 +432,33 @@ bool datalogProgram::scheme_()
 	*/
 	
 
-//schemeList	->	scheme schemeList | lambda
-bool datalogProgram::scheme_List()
-{
-	
 
-}
 
-//idList  	->	COMMA ID idList | lambda
-bool datalogProgram::id_List_()
-{
-	if(myTokens[myPos] != "ID")
-		return false;
 
-}
-
-//fact   -> 	ID LEFT_PAREN STRING stringList RIGHT_PAREN PERIOD
-bool datalogProgram::fact_()
-{
-
-}
-
-//factList	->	fact factList | lambda
-bool datalogProgram::fact_List()
-{
-
-}
-
-//rule   ->	headPredicate COLON_DASH predicate predicateList PERIOD
-bool datalogProgram::rule_()
-{
-
-}
-
-//ruleList	->	rule ruleList | lambda
-bool datalogProgram::rule_List()
-{
-
-}
-
-//headPredicate	->	ID LEFT_PAREN ID idList RIGHT_PAREN
-bool datalogProgram::head_Predicate()
-{
-
-}
-
-//predicate	->	ID LEFT_PAREN parameter parameterList RIGHT_PAREN
-bool datalogProgram::predicate_()
-{
-
-}
 
 //predicateList	->	COMMA predicate predicateList | lambda
 bool datalogProgram::predicate_List()
 {
+	if(myTokens[myPos] == "COMMA")
+	{
+		myPos++;
+		if(!predicate_())
+		{
+			return false;
+		}
+		if(!predicate_List())
+		{
+			return false;
+		}
+	}
+	return true;
 
 }
 
 //parameter	->	STRING | ID | expression
 bool datalogProgram::parameter_()
 {
+	
 
 }
 
