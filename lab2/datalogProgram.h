@@ -25,18 +25,20 @@ class datalogProgram
 		vector<rule> myRules;
 		vector<sceme> mySchemes;
 		vector<fact> myFacts;
-		vecotr<query> myQueries;
+		vector<query> myQueries;
 		set<string> myDomain;
 		
 		vector<string> temp_vec;
-		vector<predicate> temp_pred;
-		vector<paramater> temp_param;
+		vector<predicate> temp_pred_vec;
+		vector<paramater> temp_param_vec;
 		
 		rule temp_rule;
 		scheme temp_scheme;
 		fact temp_fact;
 		query temp_query;
 		string temp_string;
+		predicate temp_predicate;
+		parameter temp_parameter;
 		
 		
 		bool datalogue_Program();
