@@ -18,7 +18,7 @@ class parameter_string: public parameter
 {
 	public:
 	
-		paramter_string();
+		parameter_string();
 		void print();
 	
 	private:
