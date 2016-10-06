@@ -15,7 +15,8 @@ class rule
 	
 	private:
 		
-		vector<string> myHeadPredicates;
+		string myHeadID;
+		vector<string> myIDs;
 		vector<predicate> myPredicates;
 	
 };
